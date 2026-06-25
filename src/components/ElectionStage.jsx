@@ -1,14 +1,36 @@
 import { getEliminationQuip, getVictoryQuip } from '../lib/quips.js';
 
+function tallyRows(election) {
+  const { candidates, activeCandidates, currentCounts, eliminated, winner } =
+    election;
+
+  return [...candidates]
+    .map((candidate) => ({
+      candidate,
+      count: currentCounts[candidate] ?? 0,
+      isActive: activeCandidates.includes(candidate),
+      wasEliminated: eliminated.includes(candidate),
+      isWinner: winner === candidate,
+    }))
+    .sort((a, b) => {
+      if (a.isWinner !== b.isWinner) return a.isWinner ? -1 : 1;
+      if (a.isActive !== b.isActive) return a.isActive ? -1 : 1;
+      return b.count - a.count;
+    });
+}
+
 export default function ElectionStage({ election }) {
   if (!election || election.step === 'ready') return null;
 
-  const { round, step, winner, lastEliminated, activeCandidates, eliminated } =
-    election;
+  const { round, step, winner, lastEliminated, activeCandidates } = election;
   const isComplete = step === 'complete';
+  const rows = tallyRows(election);
+  const maxCount = Math.max(...rows.map((r) => r.count), 1);
 
   return (
-    <section className={`election-stage card ${isComplete ? 'election-stage--victory' : ''}`}>
+    <section
+      className={`election-stage card ${isComplete ? 'election-stage--victory' : ''}`}
+    >
       {isComplete && winner && (
         <div className="victory-banner">
           <div className="confetti" aria-hidden="true">
@@ -30,71 +52,75 @@ export default function ElectionStage({ election }) {
       )}
 
       {!isComplete && (
-        <>
-          <p className="stage-eyebrow">Round {round}</p>
-          <h2 className="stage-title">The count is in</h2>
-          {lastEliminated && (
-            <p className="elimination-quip">
-              {getEliminationQuip(lastEliminated, round)}
-            </p>
-          )}
-        </>
+        <header className="stage-header">
+          <div>
+            <p className="stage-eyebrow">Round {round}</p>
+            <h2 className="stage-title">Live tally</h2>
+          </div>
+          <div className="stage-meta">
+            <span className="meta-pill">
+              {activeCandidates.length} in contention
+            </span>
+            <span className="meta-pill meta-pill--muted">
+              {election.totalBallots} ballots
+            </span>
+          </div>
+        </header>
       )}
 
-      <div className="counts-table-wrap">
-        <table className="counts-table">
-          <thead>
-            <tr>
-              <th>Candidate</th>
-              <th>Votes this round</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {election.candidates.map((candidate) => {
-              const isActive = activeCandidates.includes(candidate);
-              const count = election.currentCounts[candidate] ?? 0;
-              const wasEliminated = eliminated.includes(candidate);
+      {!isComplete && lastEliminated && (
+        <p className="elimination-quip">
+          {getEliminationQuip(lastEliminated, round)}
+        </p>
+      )}
 
-              return (
-                <tr
-                  key={candidate}
-                  className={[
-                    !isActive && wasEliminated ? 'row-eliminated' : '',
-                    winner === candidate ? 'row-winner' : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                >
-                  <td>{candidate}</td>
-                  <td>
-                    <span className="vote-bar-wrap">
-                      <span
-                        className="vote-bar"
-                        style={{
-                          width: `${election.totalBallots ? (count / election.totalBallots) * 100 : 0}%`,
-                        }}
-                      />
-                      <span className="vote-count">{count}</span>
-                    </span>
-                  </td>
-                  <td>
-                    {winner === candidate && (
-                      <span className="badge badge-gold">Elected</span>
-                    )}
-                    {wasEliminated && !winner && (
-                      <span className="badge badge-muted">Eliminated</span>
-                    )}
-                    {isActive && winner !== candidate && (
-                      <span className="badge badge-green">In contention</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <ul className="tally-list" aria-label="Candidate vote tally">
+        {rows.map(
+          ({ candidate, count, isActive, wasEliminated, isWinner }) => {
+            const pct = election.totalBallots
+              ? (count / election.totalBallots) * 100
+              : 0;
+
+            return (
+              <li
+                key={candidate}
+                className={[
+                  'tally-row',
+                  wasEliminated && !isWinner ? 'tally-row--eliminated' : '',
+                  isWinner ? 'tally-row--winner' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <div className="tally-row-top">
+                  <span className="tally-name">{candidate}</span>
+                  <span className="tally-votes">
+                    <strong>{count}</strong>
+                    <span className="tally-pct">{pct.toFixed(0)}%</span>
+                  </span>
+                </div>
+                <div className="tally-bar-track" aria-hidden="true">
+                  <span
+                    className="tally-bar-fill"
+                    style={{ width: `${(count / maxCount) * 100}%` }}
+                  />
+                </div>
+                <div className="tally-status">
+                  {isWinner && (
+                    <span className="badge badge-gold">Elected</span>
+                  )}
+                  {wasEliminated && !isWinner && (
+                    <span className="badge badge-muted">Eliminated</span>
+                  )}
+                  {isActive && !isWinner && (
+                    <span className="badge badge-green">In contention</span>
+                  )}
+                </div>
+              </li>
+            );
+          },
+        )}
+      </ul>
 
       {election.exhaustedCount > 0 && (
         <p className="exhausted-note">

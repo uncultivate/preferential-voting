@@ -23,28 +23,25 @@ export default function CsvUpload({ onParsed, onError, disabled }) {
   };
 
   return (
-    <section className="upload-panel card">
-      
-      <div className="upload-actions">
-        <label className={`btn btn-primary ${disabled ? 'btn-disabled' : ''}`}>
-          Choose CSV
-          <input
-            type="file"
-            accept=".csv,text/csv"
-            onChange={handleFile}
-            disabled={disabled}
-            hidden
-          />
-        </label>
-        <button
-          type="button"
-          className="btn btn-secondary"
-          onClick={loadSample}
+    <div className="header-upload">
+      <label className={`btn btn-sm btn-primary ${disabled ? 'btn-disabled' : ''}`}>
+        Choose CSV
+        <input
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleFile}
           disabled={disabled}
-        >
-          Try sample ballots
-        </button>
-      </div>
-    </section>
+          hidden
+        />
+      </label>
+      <button
+        type="button"
+        className="btn btn-sm btn-secondary"
+        onClick={loadSample}
+        disabled={disabled}
+      >
+        Sample ballots
+      </button>
+    </div>
   );
 }

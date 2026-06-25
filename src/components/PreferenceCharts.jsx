@@ -21,7 +21,7 @@ import {
   buildTwoPartyChartData,
 } from '../lib/twoPartyPreferred.js';
 
-const PIE_COLORS = [
+const CHART_COLORS = [
   '#1b6b3a',
   '#c9a227',
   '#2d6a8f',
@@ -31,6 +31,123 @@ const PIE_COLORS = [
   '#3d7a6b',
   '#7a5c3d',
 ];
+
+function colorFor(index) {
+  return CHART_COLORS[index % CHART_COLORS.length];
+}
+
+function RoundVoteChart({ activeCandidates, currentCounts }) {
+  const barData = activeCandidates
+    .map((name, index) => ({
+      name,
+      votes: currentCounts[name] ?? 0,
+      fill: colorFor(index),
+    }))
+    .filter((d) => d.votes > 0)
+    .sort((a, b) => b.votes - a.votes);
+
+  const pieData = barData.map(({ name, votes, fill }) => ({
+    name,
+    value: votes,
+    fill,
+  }));
+  const totalVotes = pieData.reduce((sum, d) => sum + d.value, 0);
+
+  if (barData.length === 0) {
+    return <p className="chart-empty">No votes to chart this round.</p>;
+  }
+
+  return (
+    <div className="round-charts">
+      <div className="round-chart round-chart--donut">
+        <ResponsiveContainer width="100%" height={260}>
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={62}
+              outerRadius={100}
+              paddingAngle={2}
+              animationDuration={600}
+            >
+              {pieData.map((entry) => (
+                <Cell key={entry.name} fill={entry.fill} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value) => [`${value} votes`, 'Count']}
+            />
+            <text
+              x="50%"
+              y="48%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="donut-center-label"
+            >
+              {totalVotes}
+            </text>
+            <text
+              x="50%"
+              y="58%"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="donut-center-sublabel"
+            >
+              votes
+            </text>
+          </PieChart>
+        </ResponsiveContainer>
+        <ul className="donut-legend">
+          {pieData.map((entry) => (
+            <li key={entry.name}>
+              <span
+                className="donut-legend-swatch"
+                style={{ background: entry.fill }}
+              />
+              {entry.name}
+              <span className="donut-legend-value">{entry.value}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="round-chart round-chart--bars">
+        <ResponsiveContainer width="100%" height={Math.max(220, barData.length * 44)}>
+          <BarChart
+            data={barData}
+            layout="vertical"
+            margin={{ top: 4, right: 16, left: 0, bottom: 4 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(0,0,0,0.06)"
+              horizontal={false}
+            />
+            <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={96}
+              tick={{ fontSize: 12, fill: '#5c5348' }}
+            />
+            <Tooltip
+              formatter={(value) => [`${value} votes`, 'This round']}
+              cursor={{ fill: 'rgba(27, 107, 58, 0.06)' }}
+            />
+            <Bar dataKey="votes" radius={[0, 6, 6, 0]} animationDuration={600}>
+              {barData.map((entry) => (
+                <Cell key={entry.name} fill={entry.fill} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
 
 export default function PreferenceCharts({ election, parseResult }) {
   if (!election || !parseResult || election.step === 'ready') return null;
@@ -46,24 +163,16 @@ export default function PreferenceCharts({ election, parseResult }) {
       : null;
   const twoPartyData = twoParty ? buildTwoPartyChartData(twoParty) : [];
 
-  const pieData = activeCandidates
-    .map((name) => ({
-      name,
-      value: currentCounts[name] ?? 0,
-    }))
-    .filter((d) => d.value > 0);
-
   const stackedData = buildStackedBarData(candidates, preferenceStats);
   const prefLabels = getPreferenceLabels(preferenceStats, candidates);
 
   return (
-    <section className="charts-section">
+    <div className="charts-panel">
       {isComplete && twoParty ? (
-        <div className="chart-card card chart-card--2pp">
+        <section className="chart-card card chart-card--highlight">
           <h3>Two-party preferred</h3>
           <p className="chart-subtitle">
-            Final head-to-head after preferences between {twoParty.partyA} and{' '}
-            {twoParty.partyB}
+            Final head-to-head between {twoParty.partyA} and {twoParty.partyB}
           </p>
           <div className="tpp-bar-wrap">
             <div className="tpp-bar">
@@ -93,7 +202,7 @@ export default function PreferenceCharts({ election, parseResult }) {
               </span>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={200}>
+          <ResponsiveContainer width="100%" height={220}>
             <BarChart
               data={twoPartyData}
               layout="vertical"
@@ -115,10 +224,7 @@ export default function PreferenceCharts({ election, parseResult }) {
               />
               <Bar dataKey="votes" radius={[0, 6, 6, 0]} animationDuration={800}>
                 {twoPartyData.map((entry, index) => (
-                  <Cell
-                    key={entry.name}
-                    fill={PIE_COLORS[index % PIE_COLORS.length]}
-                  />
+                  <Cell key={entry.name} fill={colorFor(index)} />
                 ))}
               </Bar>
             </BarChart>
@@ -129,68 +235,48 @@ export default function PreferenceCharts({ election, parseResult }) {
               {twoParty.exhausted !== 1 ? 's' : ''} ranked neither finalist.
             </p>
           )}
-        </div>
+        </section>
       ) : (
-        <div className="chart-card card">
-          <h3>Current round votes</h3>
-          <p className="chart-subtitle">Live distribution among active candidates</p>
-          {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={95}
-                  label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
-                  }
-                  animationDuration={600}
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell
-                      key={entry.name}
-                      fill={PIE_COLORS[index % PIE_COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          ) : (
-            <p className="chart-empty">No votes to chart this round.</p>
-          )}
-        </div>
+        <section className="chart-card card">
+          <h3>Current round</h3>
+          <p className="chart-subtitle">
+            Vote distribution among active candidates
+          </p>
+          <RoundVoteChart
+            activeCandidates={activeCandidates}
+            currentCounts={currentCounts}
+          />
+        </section>
       )}
 
-      <div className="chart-card card">
+      <section className="chart-card card">
         <h3>Preference distribution</h3>
         <p className="chart-subtitle">
-          How voters ranked each candidate (original ballots)
+          How voters ranked each candidate on original ballots
         </p>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={stackedData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.08)" />
+        <ResponsiveContainer width="100%" height={340}>
+          <BarChart
+            data={stackedData}
+            margin={{ top: 12, right: 12, left: 0, bottom: 4 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
             <XAxis dataKey="name" tick={{ fontSize: 12 }} />
             <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
             <Tooltip />
-            <Legend />
+            <Legend wrapperStyle={{ fontSize: '0.85rem' }} />
             {prefLabels.map((pref, index) => (
               <Bar
                 key={pref.key}
                 dataKey={pref.key}
                 name={pref.label}
                 stackId="prefs"
-                fill={PIE_COLORS[index % PIE_COLORS.length]}
+                fill={colorFor(index)}
                 animationDuration={600}
               />
             ))}
           </BarChart>
         </ResponsiveContainer>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

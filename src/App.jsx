@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import Header from './components/Header.jsx';
-import CsvUpload from './components/CsvUpload.jsx';
 import BallotSummary from './components/BallotSummary.jsx';
 import ElectionStage from './components/ElectionStage.jsx';
 import ElectionControls from './components/ElectionControls.jsx';
@@ -59,7 +58,11 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header />
+      <Header
+        onParsed={handleParsed}
+        onError={setError}
+        uploadDisabled={proceedingsActive}
+      />
 
       {error && (
         <div className="error-banner" role="alert">
@@ -68,25 +71,31 @@ export default function App() {
       )}
 
       <main className="main">
-        <CsvUpload
-          onParsed={handleParsed}
-          onError={setError}
-          disabled={proceedingsActive}
-        />
+        <div className="action-bar card">
+          {parseResult ? (
+            <>
+              <BallotSummary parseResult={parseResult} />
+              <ElectionControls
+                election={election}
+                parseResult={parseResult}
+                onBegin={handleBegin}
+                onContinue={handleContinue}
+                onReset={handleReset}
+              />
+            </>
+          ) : (
+            <p className="action-bar-hint">
+              Upload a CSV to get this democracy party started.
+            </p>
+          )}
+        </div>
 
-        <BallotSummary parseResult={parseResult} />
-
-        <ElectionControls
-          election={election}
-          parseResult={parseResult}
-          onBegin={handleBegin}
-          onContinue={handleContinue}
-          onReset={handleReset}
-        />
-
-        <ElectionStage election={election} />
-
-        <PreferenceCharts election={election} parseResult={parseResult} />
+        {proceedingsActive && (
+          <div className="dashboard">
+            <ElectionStage election={election} />
+            <PreferenceCharts election={election} parseResult={parseResult} />
+          </div>
+        )}
       </main>
 
       <footer className="footer">

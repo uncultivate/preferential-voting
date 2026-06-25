@@ -23,13 +23,13 @@ import {
 
 const CHART_COLORS = [
   '#1b6b3a',
-  '#c9a227',
-  '#2d6a8f',
-  '#8b3a62',
-  '#5c4d7a',
-  '#b85c38',
-  '#3d7a6b',
-  '#7a5c3d',
+  '#2563eb',
+  '#d97706',
+  '#dc2626',
+  '#7c3aed',
+  '#0891b2',
+  '#db2777',
+  '#65a30d',
 ];
 
 function colorFor(index) {
@@ -60,46 +60,53 @@ function RoundVoteChart({ activeCandidates, currentCounts }) {
   return (
     <div className="round-charts">
       <div className="round-chart round-chart--donut">
-        <ResponsiveContainer width="100%" height={260}>
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              innerRadius={62}
-              outerRadius={100}
-              paddingAngle={2}
-              animationDuration={600}
-            >
-              {pieData.map((entry) => (
-                <Cell key={entry.name} fill={entry.fill} />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value) => [`${value} votes`, 'Count']}
-            />
-            <text
-              x="50%"
-              y="48%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="donut-center-label"
-            >
-              {totalVotes}
-            </text>
-            <text
-              x="50%"
-              y="58%"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="donut-center-sublabel"
-            >
-              votes
-            </text>
-          </PieChart>
-        </ResponsiveContainer>
+        <div className="donut-chart-wrap">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={pieData}
+                dataKey="value"
+                nameKey="name"
+                cx="50%"
+                cy="50%"
+                innerRadius="52%"
+                outerRadius="88%"
+                paddingAngle={1}
+                stroke="#fff"
+                strokeWidth={2}
+                animationDuration={600}
+              >
+                {pieData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.fill} />
+                ))}
+              </Pie>
+              <Tooltip
+                formatter={(value) => [
+                  `${value} (${((value / totalVotes) * 100).toFixed(0)}%)`,
+                  'Votes',
+                ]}
+              />
+              <text
+                x="50%"
+                y="47%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="donut-center-label"
+              >
+                {totalVotes}
+              </text>
+              <text
+                x="50%"
+                y="57%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="donut-center-sublabel"
+              >
+                votes
+              </text>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
         <ul className="donut-legend">
           {pieData.map((entry) => (
             <li key={entry.name}>
@@ -107,8 +114,13 @@ function RoundVoteChart({ activeCandidates, currentCounts }) {
                 className="donut-legend-swatch"
                 style={{ background: entry.fill }}
               />
-              {entry.name}
-              <span className="donut-legend-value">{entry.value}</span>
+              <span className="donut-legend-name">{entry.name}</span>
+              <span className="donut-legend-value">
+                {entry.value}
+                <span className="donut-legend-pct">
+                  {((entry.value / totalVotes) * 100).toFixed(0)}%
+                </span>
+              </span>
             </li>
           ))}
         </ul>

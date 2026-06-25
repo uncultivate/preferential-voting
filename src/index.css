@@ -1,0 +1,62 @@
+:root {
+  --green-deep: #0f3d24;
+  --green-mid: #1b6b3a;
+  --green-light: #2d8f52;
+  --gold: #c9a227;
+  --gold-bright: #e8c547;
+  --paper: #f4efe4;
+  --paper-dark: #e8e0d0;
+  --ink: #1a1612;
+  --ink-muted: #5c5348;
+  --card-shadow: 0 4px 24px rgba(15, 61, 36, 0.12);
+  --radius: 12px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--ink);
+  background-color: var(--paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(201, 162, 39, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(27, 107, 58, 0.1) 0%, transparent 50%),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(0, 0, 0, 0.02) 28px,
+      rgba(0, 0, 0, 0.02) 29px
+    ),
+    var(--paper);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  line-height: 1.2;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

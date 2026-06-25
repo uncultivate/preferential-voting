@@ -1,0 +1,500 @@
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem 0;
+}
+
+.header-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.75rem;
+  color: var(--green-mid);
+  margin: 0 0 0.5rem;
+  font-weight: 600;
+}
+
+.header-title {
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-weight: 800;
+  color: var(--green-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 2px 2px 0 var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.header-tagline {
+  font-size: 1.1rem;
+  color: var(--ink-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Layout */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  border: 1px solid var(--paper-dark);
+}
+
+/* Upload */
+.upload-panel h2,
+.ballot-summary h2 {
+  font-size: 1.25rem;
+  color: var(--green-deep);
+  margin-bottom: 0.75rem;
+}
+
+.upload-hint {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  margin: 0 0 1.25rem;
+}
+
+.upload-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 2px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--green-mid);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--green-light);
+  box-shadow: 0 4px 12px rgba(27, 107, 58, 0.35);
+}
+
+.btn-secondary {
+  background: var(--paper);
+  color: var(--green-deep);
+  border-color: var(--green-mid);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--paper-dark);
+}
+
+.btn-hero {
+  background: linear-gradient(135deg, var(--green-mid), var(--green-deep));
+  color: white;
+  font-size: 1.15rem;
+  padding: 0.85rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 6px 20px rgba(15, 61, 36, 0.3);
+}
+
+.btn-hero:hover:not(:disabled) {
+  box-shadow: 0 8px 28px rgba(15, 61, 36, 0.4);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-muted);
+  border: none;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.btn-disabled {
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+/* Ballot summary */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.stat {
+  text-align: center;
+  padding: 0.75rem;
+  background: var(--paper);
+  border-radius: 8px;
+}
+
+.stat-value {
+  display: block;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--green-deep);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.candidate-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  background: var(--green-deep);
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Controls */
+.controls {
+  text-align: center;
+}
+
+.controls--muted p,
+.controls-hint {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  margin: 0.75rem 0 0;
+}
+
+.controls-done {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--green-deep);
+  margin: 0 0 1rem;
+}
+
+/* Election stage */
+.election-stage--victory {
+  border-color: var(--gold);
+  background: linear-gradient(180deg, #fffef8 0%, white 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.stage-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.7rem;
+  color: var(--gold);
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.stage-title {
+  font-size: 1.5rem;
+  color: var(--green-deep);
+  margin-bottom: 0.75rem;
+}
+
+.stage-quip,
+.elimination-quip {
+  font-style: italic;
+  color: var(--ink-muted);
+  margin: 0 0 1rem;
+}
+
+.winner-name {
+  font-size: 2.5rem;
+  color: var(--green-deep);
+  margin: 0.25rem 0;
+  animation: pop-in 0.6s ease-out;
+}
+
+.victory-banner {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.no-winner h2 {
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Vote table */
+.counts-table-wrap {
+  overflow-x: auto;
+}
+
+.counts-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.counts-table th,
+.counts-table td {
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--paper-dark);
+}
+
+.counts-table th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+}
+
+.row-eliminated td {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.row-winner td {
+  font-weight: 700;
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.vote-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+}
+
+.vote-bar {
+  display: block;
+  height: 8px;
+  background: linear-gradient(90deg, var(--green-mid), var(--green-light));
+  border-radius: 4px;
+  min-width: 4px;
+  transition: width 0.6s ease-out;
+}
+
+.vote-count {
+  font-weight: 700;
+  min-width: 1.5rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge-green {
+  background: rgba(27, 107, 58, 0.15);
+  color: var(--green-deep);
+}
+
+.badge-gold {
+  background: rgba(201, 162, 39, 0.25);
+  color: #7a5c00;
+}
+
+.badge-muted {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink-muted);
+}
+
+.exhausted-note {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+/* Charts */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.chart-card h3 {
+  font-size: 1.1rem;
+  color: var(--green-deep);
+  margin-bottom: 0.25rem;
+}
+
+.chart-subtitle {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin: 0 0 1rem;
+}
+
+.chart-empty {
+  color: var(--ink-muted);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+.chart-card--2pp {
+  grid-column: 1 / -1;
+}
+
+.tpp-bar-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.tpp-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tpp-bar-segment {
+  transition: width 0.8s ease-out;
+  min-width: 2px;
+}
+
+.tpp-bar-segment--a {
+  background: linear-gradient(90deg, var(--green-mid), var(--green-light));
+}
+
+.tpp-bar-segment--b {
+  background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+}
+
+.tpp-labels {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.65rem;
+  font-size: 0.9rem;
+}
+
+.tpp-label strong {
+  font-size: 1.1rem;
+  color: var(--green-deep);
+}
+
+.tpp-votes {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  font-weight: 400;
+}
+
+.chart-footnote {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+
+/* Error */
+.error-banner {
+  background: #fde8e8;
+  color: #9b1c1c;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.25rem;
+  border: 1px solid #f5c6c6;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 2.5rem;
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.footer p {
+  margin: 0;
+}
+
+/* Confetti */
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -10px;
+  left: calc(var(--i) * 4.2%);
+  background: var(--gold);
+  animation: confetti-fall 2.5s ease-in forwards;
+  animation-delay: calc(var(--i) * 0.08s);
+  border-radius: 1px;
+}
+
+.confetti-piece:nth-child(odd) {
+  background: var(--green-mid);
+  width: 6px;
+  height: 10px;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(180px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .header-title {
+    font-size: 1.75rem;
+  }
+}
